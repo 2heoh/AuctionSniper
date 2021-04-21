@@ -1,3 +1,7 @@
+package e2e;
+
+import auctionsniper.ApplicationRunner;
+import auctionsniper.AuctionServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +14,21 @@ public class AuctionSniperEndToEndTest {
         auction.startSellingItem();
         application.startBiddingIn(auction);
         auction.hasReceivedJoinRequestFromSniper();
+        auction.announceClosed();
+        application.showsSniperHasLostAuction();
+    }
+
+    @Test
+    void sniperMakesAHigherBitButLoses() throws Exception {
+        auction.startSellingItem();
+        application.startBiddingIn(auction);
+        auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+
+        auction.reportPrice(1000, 98, "other bidder");
+        application.hasShownSniperIsBidding();
+
+        auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_XMPP_ID);
+
         auction.announceClosed();
         application.showsSniperHasLostAuction();
     }

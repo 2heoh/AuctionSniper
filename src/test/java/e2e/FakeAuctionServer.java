@@ -1,5 +1,16 @@
-import org.jivesoftware.smack.*;
+package e2e;
+
+import auctionsniper.AuctionServer;
+import auctionsniper.Main;
+import org.hamcrest.Matcher;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.SASLAuthentication;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class FakeAuctionServer implements AuctionServer {
     private static final String ITEM_AS_LOGIN = "auction-%s";
@@ -34,12 +45,33 @@ public class FakeAuctionServer implements AuctionServer {
         return itemId;
     }
 
+    @Override
+    public void reportPrice(int price, int increment, String bidder) throws XMPPException {
+        currentChat.sendMessage(String.format("SOLVersion: 1.1; Event: PRICE; CurrentPrice: %d; Increment: %d; Bidder: %s", price, increment, bidder));
+    }
+
+    public void hasReceivedJoinRequestFrom(String sniperId) throws InterruptedException {
+        receivesAMessageMatching(sniperId, equalTo(Main.JOIN_COMMAND_FORMAT));
+    }
+
+    private void receivesAMessageMatching(String sniperId, Matcher<? super String> messageMatcher) throws InterruptedException {
+        messageListener.receivesAMessage(messageMatcher);
+        assertThat(currentChat.getParticipant(), equalTo(sniperId));
+    }
+
     public void hasReceivedJoinRequestFromSniper() throws InterruptedException {
         messageListener.receivesAMessage();
     }
 
+    @Override
+    public void hasReceivedBid(int bid, String sniperId) throws InterruptedException {
+        receivesAMessageMatching(sniperId, equalTo(String.format(Main.BID_COMMAND_FORMAT, bid)));
+    }
+
     public void announceClosed() throws XMPPException {
-        currentChat.sendMessage(new Message());
+        final var message = new Message();
+        message.setBody("SOLVersion: 1.1; Event: CLOSE;");
+        currentChat.sendMessage(message);
     }
 
     public void stop() {

@@ -1,8 +1,10 @@
+package auctionsniper;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
     private static final String XMPP_HOSTNAME = "104.248.47.45";
+    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME+"/Auction";
     private AuctionSniperDriver driver;
 
 
@@ -11,7 +13,6 @@ public class ApplicationRunner {
             @Override
             public void run() {
                 try{
-                    System.out.println(auction.getItemId());
                     Main.main(XMPP_HOSTNAME, SNIPER_ID, SNIPER_PASSWORD, auction.getItemId());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -32,5 +33,9 @@ public class ApplicationRunner {
 
     public void stop() {
         driver.dispose();
+    }
+
+    public void hasShownSniperIsBidding() {
+        driver.showsSniperStatus(MainWindow.STATUS_BIDDING);
     }
 }

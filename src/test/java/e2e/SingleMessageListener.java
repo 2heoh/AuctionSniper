@@ -1,3 +1,6 @@
+package e2e;
+
+import org.hamcrest.Matcher;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
@@ -20,5 +23,11 @@ public class SingleMessageListener implements MessageListener {
     public void receivesAMessage() throws InterruptedException {
         final var message = messages.poll(5, TimeUnit.SECONDS);
         assertThat("Message is empty", message, is(notNullValue()));
+    }
+
+    public void receivesAMessage(Matcher<? super String> messageMatcher) throws InterruptedException {
+        final var message = messages.poll(5, TimeUnit.SECONDS);
+        assertThat("Message", message, is(notNullValue()));
+        assertThat(message.getBody(), messageMatcher);
     }
 }
