@@ -19,7 +19,7 @@ public class AuctionMessageTranslatorTest{
     private AuctionMessageTranslator translator = new AuctionMessageTranslator(listener);
 
     @Test
-    void notifiesAuctionClosedWhenCloseMessageReceived() {
+    void notifiesAuctionClosedWhenCloseMessageReceivedFrom() {
 
         context.checking(new Expectations(){{ oneOf(listener).auctionClosed(); }});
 
@@ -30,7 +30,7 @@ public class AuctionMessageTranslatorTest{
     }
 
     @Test
-    void notifiesBidDetailsWhenCurrentPriceMessageReceived() {
+    void notifiesBidDetailsWhenCurrentPriceMessageReceivedOtherBidder() {
         context.checking(new Expectations() {{
             exactly(1).of(listener).currentPrice(192, 7);
         }});
@@ -40,4 +40,15 @@ public class AuctionMessageTranslatorTest{
 
         translator.processMessage(UNUSED_CHAT, message);
     }
+
+//    @Test
+//    void notifiesBidDetailsWhenCurrentPriceMessageReceivedFormSniper() {
+//        context.checking(new Expectations(){{
+//            exactly(1).of(listener).currentPrice(234, 5);
+//        }});
+//
+//        final var message = new Message();
+//        message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: "+SNIPER_ID+";");
+//        translator.processMessage(UNUSED_CHAT, message);
+//    }
 }

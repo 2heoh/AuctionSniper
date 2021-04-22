@@ -4,32 +4,21 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.HashMap;
-
-
 public class AuctionMessageTranslator implements MessageListener {
-    private AuctionEventListener listener;
+    private final AuctionEventListener listener;
 
     public AuctionMessageTranslator(AuctionEventListener listener) {
         this.listener = listener;
     }
 
     public void processMessage(Chat chat, Message message) {
-        HashMap<String, String> event = unpackEventFrom(message);
-        String type = event.get("Event");
-        if("CLOSE".equals(type)) {
-            listener.auctionClosed();
-        } else if ("PRICE".equals(type)) {
-            listener.currentPrice(Integer.parseInt(event.get("CurrentPrice")), Integer.parseInt(event.get("Increment")));
-        }
-    }
+        AuctionEvent event = AuctionEvent.from(message.getBody());
 
-    private HashMap<String, String> unpackEventFrom(Message message) {
-        final var event = new HashMap<String, String>();
-        for (String element : message.getBody().split(";")) {
-            final var pair = element.split(":");
-            event.put(pair[0].trim(), pair[1].trim());
+        String eventType = event.type();
+        if("CLOSE".equals(eventType)) {
+            listener.auctionClosed();
+        } else if ("PRICE".equals(eventType)) {
+            listener.currentPrice(event.currentPrice(), event.increment());
         }
-        return event;
     }
 }

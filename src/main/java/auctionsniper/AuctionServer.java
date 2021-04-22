@@ -5,8 +5,6 @@ import org.jivesoftware.smack.XMPPException;
 public interface AuctionServer {
     void startSellingItem() throws Exception;
 
-    void hasReceivedJoinRequestFromSniper() throws Exception;
-
     void hasReceivedJoinRequestFrom(String sniperId) throws Exception;
 
     void announceClosed() throws Exception;

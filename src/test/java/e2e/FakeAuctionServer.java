@@ -59,10 +59,6 @@ public class FakeAuctionServer implements AuctionServer {
         assertThat(currentChat.getParticipant(), equalTo(sniperId));
     }
 
-    public void hasReceivedJoinRequestFromSniper() throws InterruptedException {
-        messageListener.receivesAMessage();
-    }
-
     @Override
     public void hasReceivedBid(int bid, String sniperId) throws InterruptedException {
         receivesAMessageMatching(sniperId, equalTo(String.format(Main.BID_COMMAND_FORMAT, bid)));
