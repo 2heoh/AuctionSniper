@@ -1,0 +1,11 @@
+# TODO
+-[x] Single item - join, lose without bidding
+-[x] Single item - join, bid & lose
+-[x] Single item - join, bid & win
+-[ ] Single item - show price details
+-[ ] Multiple items
+-[ ] Add new items through the GUI
+-[ ] Stop bidding at stop price
+-[ ] Translator - invalid message from auction
+-[ ] Translator - incorrect message version
+-[ ] Auction - handle XMPP Exception

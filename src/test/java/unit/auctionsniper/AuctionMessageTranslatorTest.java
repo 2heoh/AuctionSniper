@@ -9,6 +9,8 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static auctionsniper.ApplicationRunner.SNIPER_ID;
+
 
 public class AuctionMessageTranslatorTest{
     private static final Chat UNUSED_CHAT = null;
@@ -16,7 +18,7 @@ public class AuctionMessageTranslatorTest{
     @RegisterExtension JUnit5Mockery context = new JUnit5Mockery();
     private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
 
-    private AuctionMessageTranslator translator = new AuctionMessageTranslator(listener);
+    private AuctionMessageTranslator translator = new AuctionMessageTranslator(SNIPER_ID, listener);
 
     @Test
     void notifiesAuctionClosedWhenCloseMessageReceivedFrom() {
@@ -32,7 +34,7 @@ public class AuctionMessageTranslatorTest{
     @Test
     void notifiesBidDetailsWhenCurrentPriceMessageReceivedOtherBidder() {
         context.checking(new Expectations() {{
-            exactly(1).of(listener).currentPrice(192, 7);
+            exactly(1).of(listener).currentPrice(192, 7, AuctionEventListener.PriceSource.FromOtherBidder);
         }});
 
         final var message = new Message();
@@ -41,14 +43,14 @@ public class AuctionMessageTranslatorTest{
         translator.processMessage(UNUSED_CHAT, message);
     }
 
-//    @Test
-//    void notifiesBidDetailsWhenCurrentPriceMessageReceivedFormSniper() {
-//        context.checking(new Expectations(){{
-//            exactly(1).of(listener).currentPrice(234, 5);
-//        }});
-//
-//        final var message = new Message();
-//        message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: "+SNIPER_ID+";");
-//        translator.processMessage(UNUSED_CHAT, message);
-//    }
+    @Test
+    void notifiesBidDetailsWhenCurrentPriceMessageReceivedFormSniper() {
+        context.checking(new Expectations(){{
+            exactly(1).of(listener).currentPrice(234, 5, AuctionEventListener.PriceSource.FromSniper);
+        }});
+
+        final var message = new Message();
+        message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: "+SNIPER_ID+";");
+        translator.processMessage(UNUSED_CHAT, message);
+    }
 }
