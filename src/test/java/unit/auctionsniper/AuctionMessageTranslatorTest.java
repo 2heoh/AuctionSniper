@@ -9,7 +9,7 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static auctionsniper.ApplicationRunner.SNIPER_ID;
+import static e2e.ApplicationRunner.SNIPER_ID;
 
 
 public class AuctionMessageTranslatorTest{
@@ -22,7 +22,6 @@ public class AuctionMessageTranslatorTest{
 
     @Test
     void notifiesAuctionClosedWhenCloseMessageReceivedFrom() {
-
         context.checking(new Expectations(){{ oneOf(listener).auctionClosed(); }});
 
         final var message = new Message();

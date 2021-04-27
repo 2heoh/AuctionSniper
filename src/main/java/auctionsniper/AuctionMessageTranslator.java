@@ -14,16 +14,17 @@ public class AuctionMessageTranslator implements MessageListener {
     }
 
     public void processMessage(Chat chat, Message message) {
+        System.out.println(message.getBody());
         AuctionEvent event = AuctionEvent.from(message.getBody());
 
         String eventType = event.type();
-        if("CLOSE".equals(eventType)) {
+        if ("CLOSE".equals(eventType)) {
             listener.auctionClosed();
         } else if ("PRICE".equals(eventType)) {
             listener.currentPrice(
-                event.currentPrice(),
-                event.increment(),
-                event.isFrom(sniperId)
+                    event.currentPrice(),
+                    event.increment(),
+                    event.isFrom(sniperId)
             );
         }
     }

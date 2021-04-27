@@ -1,5 +1,7 @@
 package auctionsniper;
 
+import auctionsniper.ui.MainWindow;
+import auctionsniper.ui.SniperTableModel;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -13,7 +15,6 @@ public class Main {
     private static final int HOSTNAME = 0;
     private static final int USERNAME = 1;
     private static final int PASSWORD = 2;
-
     private static final int ITEM_ID = 3;
 
     private static final String AUCTION_RESOURCE = "Auction";
@@ -23,12 +24,14 @@ public class Main {
     public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
     public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: Bid; Price: %d;";
 
+    private final SniperTableModel snipers = new SniperTableModel();
+
     private MainWindow ui;
     @SuppressWarnings("unused")
     private Chat notToBeGCd;
 
     public Main() throws InterruptedException, InvocationTargetException {
-        startUserInterface();
+        SwingUtilities.invokeAndWait(() -> ui = new MainWindow(snipers));
     }
 
     public static void main(String... args) throws Exception {
@@ -36,14 +39,18 @@ public class Main {
         main.joinAuction(connection(args[HOSTNAME], args[USERNAME], args[PASSWORD]), args[ITEM_ID]);
     }
 
-    private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
-
+    private void joinAuction(XMPPConnection connection, String itemId) {
         disconnectWhenUICloses(connection);
         final var chat = connection.getChatManager().createChat(auctionId(itemId, connection), null);
         notToBeGCd = chat;
 
         Auction auction = new XMPPAuction(chat);
-        chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(), new AuctionSniper(auction, new SniperStateDisplayer(ui))));
+        chat.addMessageListener(
+            new AuctionMessageTranslator(
+                connection.getUser(),
+                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))
+            )
+        );
 
         auction.join();
     }
@@ -68,7 +75,4 @@ public class Main {
         return String.format(AUCTION_ID_FORMAT, itemId, connection.getServiceName());
     }
 
-    private void startUserInterface() throws InterruptedException, InvocationTargetException {
-        SwingUtilities.invokeAndWait(() -> ui = new MainWindow());
-    }
 }

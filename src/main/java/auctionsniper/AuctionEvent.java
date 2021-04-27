@@ -21,12 +21,12 @@ public class AuctionEvent {
         return getInt("Increment");
     }
 
-    public AuctionEventListener.PriceSource isFrom(String sniperId) {
-        return sniperId.equals(bidder()) ? FromSniper : FromOtherBidder;
-    }
-
     private String bidder() {
         return get("Bidder");
+    }
+
+    public AuctionEventListener.PriceSource isFrom(String sniperId) {
+        return sniperId.equals(bidder()) ? FromSniper : FromOtherBidder;
     }
 
     static AuctionEvent from(String messageBody) {
