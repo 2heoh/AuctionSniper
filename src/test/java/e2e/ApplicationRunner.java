@@ -1,19 +1,29 @@
 package e2e;
 
-import auctionsniper.*;
+import auctionsniper.AuctionServer;
+import auctionsniper.Main;
+import auctionsniper.SniperState;
 import auctionsniper.ui.MainWindow;
 
-import static auctionsniper.ui.SniperTableModel.*;
+import static auctionsniper.ui.SniperTableModel.textFor;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
     private static final String XMPP_HOSTNAME = "104.248.47.45";
-    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME+"/Auction";
+    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME + "/Auction";
     private AuctionSniperDriver driver;
 
     public void startBiddingIn(final AuctionServer... auctions) {
+        startSniper(auctions);
+        for (AuctionServer auction : auctions) {
+            final var itemId = auction.getItemId();
+            driver.startBiddingFor(itemId);
+            driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
+        }
+    }
 
+    private void startSniper(AuctionServer[] auctions) {
         Thread thread = new Thread("Test Application") {
             @Override
             public void run() {
@@ -27,12 +37,9 @@ public class ApplicationRunner {
 
         thread.setDaemon(true);
         thread.start();
-        driver = new AuctionSniperDriver(1000);
+        driver = new AuctionSniperDriver(2000);
         driver.hasTitle(MainWindow.MAIN_WINDOW_NAME);
         driver.hasColumnTitles();
-        for (AuctionServer auction : auctions) {
-            driver.showsSniperStatus("-", 0,0,textFor(SniperState.JOINING));
-        }
     }
 
     private static String[] arguments(AuctionServer... auctions) {
@@ -40,8 +47,8 @@ public class ApplicationRunner {
         arguments[0] = XMPP_HOSTNAME;
         arguments[1] = SNIPER_ID;
         arguments[2] = SNIPER_PASSWORD;
-        for( int i =0; i < auctions.length; i++) {
-            arguments[i+3] = auctions[i].getItemId();
+        for (int i = 0; i < auctions.length; i++) {
+            arguments[i + 3] = auctions[i].getItemId();
         }
         return arguments;
     }

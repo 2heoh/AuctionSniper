@@ -18,4 +18,9 @@ public class SwingThreadSniperListener implements SniperListener {
         });
     }
 
+    @Override
+    public void addSniper(SniperSnapshot snapshot) {
+
+    }
+
 }

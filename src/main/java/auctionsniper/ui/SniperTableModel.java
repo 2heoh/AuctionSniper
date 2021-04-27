@@ -3,14 +3,17 @@ package auctionsniper.ui;
 import auctionsniper.SniperListener;
 import auctionsniper.SniperSnapshot;
 import auctionsniper.SniperState;
+import com.objogate.exception.Defect;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SniperTableModel extends AbstractTableModel implements SniperListener {
     private final static SniperSnapshot STARTING_UP = new SniperSnapshot("-", 0, 0, SniperState.JOINING);
-    private SniperSnapshot sniperSnapshot = STARTING_UP;
+    private final List<SniperSnapshot> sniperSnapshots;
 
-    private static String[] STATUS_TEXT = {
+    private static final String[] STATUS_TEXT = {
         "Joining",
         "Bidding",
         "Winning",
@@ -18,10 +21,30 @@ public class SniperTableModel extends AbstractTableModel implements SniperListen
         "Won",
     };
 
+    public SniperTableModel() {
+        this.sniperSnapshots = new ArrayList<>();
+    }
+
     @Override
     public void sniperStateChanged(SniperSnapshot newSniperSnapshot) {
-        sniperSnapshot = newSniperSnapshot;
-        fireTableRowsUpdated(0, 0);
+        int row = matchRow(newSniperSnapshot);
+        sniperSnapshots.set(row, newSniperSnapshot);
+        fireTableRowsUpdated(row, row);
+    }
+
+    private int matchRow(SniperSnapshot snapshot) {
+        for (int i = 0; i < sniperSnapshots.size(); i++) {
+            if (snapshot.itemId.equals(sniperSnapshots.get(i).itemId)) {
+                return i;
+            }
+        }
+        throw new Defect("Cannot find match for " + snapshot);
+    }
+
+    @Override
+    public void addSniper(SniperSnapshot snapshot) {
+        sniperSnapshots.add(snapshot);
+        fireTableRowsInserted(0, 0);
     }
 
     public int getColumnCount() {
@@ -29,11 +52,11 @@ public class SniperTableModel extends AbstractTableModel implements SniperListen
     }
 
     public int getRowCount() {
-        return 1;
+        return sniperSnapshots.size();
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return Column.at(columnIndex).valueIn(sniperSnapshot);
+        return Column.at(columnIndex).valueIn(sniperSnapshots.get(rowIndex));
     }
 
     public static String textFor(SniperState state) {
