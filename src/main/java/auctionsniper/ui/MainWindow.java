@@ -6,8 +6,6 @@ import auctionsniper.util.Announcer;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     public static final String SNIPER_STATUS_NAME = "sniper status";
@@ -24,13 +22,10 @@ public class MainWindow extends JFrame {
 
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-//    private final SniperTableModel snipers;
-
     private final Announcer<UserRequestListener> userRequests =  Announcer.to(UserRequestListener.class);
 
     public MainWindow(SniperTableModel snipers) {
         super("Auction Sniper");
-//        this.snipers = snipers;
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);
         fillContentPane(makeSnipersTable(snipers), makeControls());
@@ -48,12 +43,7 @@ public class MainWindow extends JFrame {
 
         final var joinAuctionButton = new JButton("Join Auction");
         joinAuctionButton.setName(JOIN_BUTTON_NAME);
-        joinAuctionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                userRequests.announce().joinAuction(itemIdField.getText());
-            }
-        });
+        joinAuctionButton.addActionListener(e -> userRequests.announce().joinAuction(itemIdField.getText()));
         controls.add(joinAuctionButton);
 
         return controls;
