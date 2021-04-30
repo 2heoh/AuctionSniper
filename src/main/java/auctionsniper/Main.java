@@ -39,10 +39,6 @@ public class Main {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         final var connection = connection(args[HOSTNAME], args[USERNAME], args[PASSWORD]);
-
-//        for (int i = 3; i < args.length; i++) {
-//            main.joinAuction(connection, args[i]);
-//        }
         main.disconnectWhenUICloses(connection);
         main.addUserRequestListenerFor(connection);
     }
@@ -61,6 +57,7 @@ public class Main {
                         new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))
                     )
                 );
+                auction.join();
             }
         });
     }

@@ -12,6 +12,7 @@ import static com.objogate.wl.swing.matcher.IterableComponentsMatcher.matching;
 import static com.objogate.wl.swing.matcher.JLabelTextMatcher.withLabelText;
 import static java.lang.String.valueOf;
 
+@SuppressWarnings("unchecked")
 public class AuctionSniperDriver extends JFrameDriver {
 
     public AuctionSniperDriver(int timeout) {
@@ -35,12 +36,13 @@ public class AuctionSniperDriver extends JFrameDriver {
     }
 
     public void startBiddingFor(String itemId) {
-        itemIdField().replaceAllText(itemId);//.replace("-", " "));
+        itemIdField().replaceAllText(itemId);
         bidButton().click();
     }
 
     private JTextFieldDriver itemIdField() {
         final JTextFieldDriver newItemId = new JTextFieldDriver(this, JTextField.class, named(MainWindow.NEW_ITEM_ID_NAME));
+        newItemId.focusWithMouse();
         newItemId.focusWithMouse();
         return newItemId;
     }

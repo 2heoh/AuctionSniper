@@ -14,7 +14,6 @@ public class AuctionMessageTranslator implements MessageListener {
     }
 
     public void processMessage(Chat chat, Message message) {
-        System.out.println(message.getBody());
         AuctionEvent event = AuctionEvent.from(message.getBody());
 
         String eventType = event.type();

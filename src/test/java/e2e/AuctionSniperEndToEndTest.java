@@ -2,12 +2,21 @@ package e2e;
 
 import auctionsniper.AuctionServer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 public class AuctionSniperEndToEndTest {
     private final AuctionServer auction = new FakeAuctionServer("item-54321");
     private final AuctionServer auction2 = new FakeAuctionServer("item-65432");
     private final ApplicationRunner application = new ApplicationRunner();
+
+    private static final Properties props = System.getProperties();
+    @BeforeEach
+    void setUp() {
+        props.setProperty("com.objogate.wl.keyboard", "Mac-GB");
+    }
 
     @Test
     public void sniperJoinsAuctionUntilAuctionCloses() throws Exception {
