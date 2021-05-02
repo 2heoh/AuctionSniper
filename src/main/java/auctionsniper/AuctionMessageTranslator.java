@@ -8,7 +8,7 @@ public class AuctionMessageTranslator implements MessageListener {
     private final AuctionEventListener listener;
     private final String sniperId;
 
-    public AuctionMessageTranslator(String sniperId, AuctionEventListener listener) {
+    public AuctionMessageTranslator(String sniperId, AuctionEventListener listener)  {
         this.sniperId = sniperId;
         this.listener = listener;
     }

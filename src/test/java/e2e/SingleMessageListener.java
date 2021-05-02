@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class SingleMessageListener implements MessageListener {
-    private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<Message>(1);
+    private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<>(1);
 
     @Override
     public void processMessage(Chat chat, Message message) {

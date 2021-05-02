@@ -1,4 +1,4 @@
-package intergration;
+package intergration.ui;
 
 import auctionsniper.ui.MainWindow;
 import auctionsniper.ui.SniperTableModel;
