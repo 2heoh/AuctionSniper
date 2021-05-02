@@ -57,6 +57,7 @@ public class MainWindow extends JFrame {
     }
 
     private JTable makeSnipersTable(SniperTableModel snipers) {
+        SniperTableModel model = new SniperTableModel();
         final var snipersTable = new JTable(snipers);
         snipersTable.setName(SNIPERS_TABLE_NAME);
         return snipersTable;

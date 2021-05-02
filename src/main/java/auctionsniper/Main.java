@@ -16,9 +16,7 @@ public class Main {
     private static final int USERNAME = 1;
     private static final int PASSWORD = 2;
 
-
-
-    private final SniperTableModel snipers = new SniperTableModel();
+    private SniperTableModel snipers = new SniperTableModel();
 
     private MainWindow ui;
     @SuppressWarnings("unused")
@@ -37,13 +35,8 @@ public class Main {
 
     private void addUserRequestListenerFor(final AuctionHouse auctionHouse) {
         ui.addUserRequestListener(itemId -> {
-            snipers.addSniper(SniperSnapshot.joining(itemId));
-            Auction auction = auctionHouse.auctionFor(itemId);
-            notToBeGCd.add(auction);
-            auction.addAuctionEventListener(
-                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))
-            );
-            auction.join();
+            var sniperLauncher = new SniperLauncher(auctionHouse, snipers);
+            sniperLauncher.joinAuction(itemId);
         });
     }
 
