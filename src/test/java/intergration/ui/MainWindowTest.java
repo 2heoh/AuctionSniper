@@ -1,5 +1,6 @@
 package intergration.ui;
 
+import auctionsniper.SniperPortfolio;
 import auctionsniper.ui.MainWindow;
 import auctionsniper.ui.SniperTableModel;
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
@@ -20,7 +21,7 @@ public class MainWindowTest {
     void setUp() {
         props.setProperty("com.objogate.wl.keyboard", "Mac-GB");
         driver = new AuctionSniperDriver(1000);
-        mainWindow = new MainWindow(new SniperTableModel());
+        mainWindow = new MainWindow(new SniperPortfolio());
     }
 
     @Test

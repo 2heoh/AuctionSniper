@@ -16,14 +16,13 @@ public class Main {
     private static final int USERNAME = 1;
     private static final int PASSWORD = 2;
 
-    private SniperTableModel snipers = new SniperTableModel();
-
+    private final SniperPortfolio portfolio = new SniperPortfolio();
     private MainWindow ui;
     @SuppressWarnings("unused")
     private final List<Auction> notToBeGCd = new ArrayList<>();
 
     public Main() throws InterruptedException, InvocationTargetException {
-        SwingUtilities.invokeAndWait(() -> ui = new MainWindow(snipers));
+        SwingUtilities.invokeAndWait(() -> ui = new MainWindow(portfolio));
     }
 
     public static void main(String... args) throws Exception {
@@ -34,10 +33,7 @@ public class Main {
     }
 
     private void addUserRequestListenerFor(final AuctionHouse auctionHouse) {
-        ui.addUserRequestListener(itemId -> {
-            var sniperLauncher = new SniperLauncher(auctionHouse, snipers);
-            sniperLauncher.joinAuction(itemId);
-        });
+        ui.addUserRequestListener(new SniperLauncher(auctionHouse, portfolio));
     }
 
     private void disconnectWhenUICloses(final AuctionHouse auctionHouse) {

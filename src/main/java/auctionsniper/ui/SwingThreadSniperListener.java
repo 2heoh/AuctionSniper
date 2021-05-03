@@ -1,5 +1,7 @@
-package auctionsniper;
+package auctionsniper.ui;
 
+import auctionsniper.SniperListener;
+import auctionsniper.SniperSnapshot;
 import auctionsniper.ui.SniperTableModel;
 
 import javax.swing.*;
@@ -22,5 +24,6 @@ public class SwingThreadSniperListener implements SniperListener {
     public void addSniper(SniperSnapshot snapshot) {
 
     }
+
 
 }

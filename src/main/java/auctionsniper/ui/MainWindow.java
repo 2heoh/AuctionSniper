@@ -1,11 +1,14 @@
 package auctionsniper.ui;
 
+import auctionsniper.SniperPortfolio;
 import auctionsniper.UserRequestListener;
 import auctionsniper.util.Announcer;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     public static final String SNIPER_STATUS_NAME = "sniper status";
@@ -24,7 +27,7 @@ public class MainWindow extends JFrame {
 
     private final Announcer<UserRequestListener> userRequests =  Announcer.to(UserRequestListener.class);
 
-    public MainWindow(SniperTableModel snipers) {
+    public MainWindow(SniperPortfolio snipers) {
         super("Auction Sniper");
         setName(MAIN_WINDOW_NAME);
         add(sniperStatus);
@@ -56,9 +59,10 @@ public class MainWindow extends JFrame {
         contentPane.add(new JScrollPane(snipersTable), BorderLayout.CENTER);
     }
 
-    private JTable makeSnipersTable(SniperTableModel snipers) {
+    private JTable makeSnipersTable(SniperPortfolio portfolio) {
         SniperTableModel model = new SniperTableModel();
-        final var snipersTable = new JTable(snipers);
+        portfolio.addPortfolioListener(model);
+        final var snipersTable = new JTable(model);
         snipersTable.setName(SNIPERS_TABLE_NAME);
         return snipersTable;
     }
