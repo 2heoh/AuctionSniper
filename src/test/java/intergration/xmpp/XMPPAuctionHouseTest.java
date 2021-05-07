@@ -1,6 +1,7 @@
 package intergration.xmpp;
 
 import auctionsniper.AuctionEventListener;
+import auctionsniper.xmpp.XMPPAuctionException;
 import auctionsniper.xmpp.XMPPAuctionHouse;
 import e2e.ApplicationRunner;
 import e2e.FakeAuctionServer;
@@ -29,7 +30,7 @@ public class XMPPAuctionHouseTest {
     }
 
     @BeforeEach
-    void setUpAuctionHouse() throws Exception {
+    void setUpAuctionHouse() throws Exception, XMPPAuctionException {
         auctionHouse = XMPPAuctionHouse.connect(XMPP_HOSTNAME, SNIPER_ID, SNIPER_PASSWORD);
     }
 

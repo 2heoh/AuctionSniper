@@ -2,6 +2,7 @@ package auctionsniper;
 
 import auctionsniper.ui.MainWindow;
 import auctionsniper.ui.SniperTableModel;
+import auctionsniper.xmpp.XMPPAuctionException;
 import auctionsniper.xmpp.XMPPAuctionHouse;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class Main {
         SwingUtilities.invokeAndWait(() -> ui = new MainWindow(portfolio));
     }
 
-    public static void main(String... args) throws Exception {
+    public static void main(String... args) throws Exception, XMPPAuctionException {
         Main main = new Main();
         XMPPAuctionHouse auctionHouse = XMPPAuctionHouse.connect(args[HOSTNAME], args[USERNAME], args[PASSWORD]);
         main.disconnectWhenUICloses(auctionHouse);

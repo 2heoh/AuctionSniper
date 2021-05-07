@@ -1,6 +1,6 @@
 package auctionsniper;
 
-public class MissingValueException extends Throwable {
+public class MissingValueException extends RuntimeException {
     public MissingValueException(String fieldName) {
     }
 }

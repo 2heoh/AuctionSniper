@@ -3,8 +3,12 @@ package e2e;
 import auctionsniper.Main;
 import auctionsniper.SniperState;
 import auctionsniper.ui.MainWindow;
+import auctionsniper.xmpp.XMPPAuctionException;
+
+import java.io.IOException;
 
 import static auctionsniper.ui.SniperTableModel.textFor;
+import static org.hamcrest.Matchers.containsString;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
@@ -12,6 +16,7 @@ public class ApplicationRunner {
     private static final String XMPP_HOSTNAME = "104.248.47.45";
     public static final String SNIPER_XMPP_ID = SNIPER_ID + "@" + XMPP_HOSTNAME + "/Auction";
     private AuctionSniperDriver driver;
+    private AuctionLogDriver logDriver = new AuctionLogDriver();
 
     public void startBiddingIn(final AuctionServer... auctions) {
         startSniper(auctions);
@@ -30,12 +35,13 @@ public class ApplicationRunner {
     }
 
     private void startSniper(AuctionServer[] auctions) {
+        logDriver.clear();
         Thread thread = new Thread("Test Application") {
             @Override
             public void run() {
                 try {
                     Main.main(arguments(auctions));
-                } catch (Exception e) {
+                } catch (Exception | XMPPAuctionException e) {
                     e.printStackTrace();
                 }
             }
@@ -89,7 +95,7 @@ public class ApplicationRunner {
         driver.showsSniperStatus(auction.getItemId(), 0, 0, textFor(SniperState.FAILED));
     }
 
-    public void reportsInvalidMessage(AuctionServer auction, String brokenMessage) {
-
+    public void reportsInvalidMessage(AuctionServer auction, String brokenMessage) throws IOException {
+        logDriver.hasEntry(containsString(brokenMessage));
     }
 }

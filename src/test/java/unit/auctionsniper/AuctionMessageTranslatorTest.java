@@ -2,7 +2,7 @@ package unit.auctionsniper;
 
 import auctionsniper.AuctionEventListener;
 import auctionsniper.AuctionMessageTranslator;
-import auctionsniper.SniperSnapshot;
+import auctionsniper.xmpp.XMPPFailureReporter;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jmock.Expectations;
@@ -18,8 +18,9 @@ public class AuctionMessageTranslatorTest{
 
     @RegisterExtension JUnit5Mockery context = new JUnit5Mockery();
     private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
+    private final XMPPFailureReporter failureReporter = context.mock(XMPPFailureReporter.class);
 
-    private AuctionMessageTranslator translator = new AuctionMessageTranslator(SNIPER_ID, listener);
+    private AuctionMessageTranslator translator = new AuctionMessageTranslator(SNIPER_ID, listener, failureReporter);
 
     @Test
     void notifiesAuctionClosedWhenCloseMessageReceivedFrom() {
@@ -56,19 +57,28 @@ public class AuctionMessageTranslatorTest{
 
     @Test
     void notifiesAuctionFailedWhenBadMessageReceived() {
-        context.checking(new Expectations() {{
-            exactly(1).of(listener).auctionFailed();
-        }});
+        final var aBadMessage = "a bad message";
+        expectFailureWithMessage(aBadMessage);
+        translator.processMessage(UNUSED_CHAT, message(aBadMessage));
+    }
 
+    private Message message(String aBadMessage) {
         Message message = new Message();
-        message.setBody("a bad message");
+        message.setBody(aBadMessage);
+        return message;
+    }
 
-        translator.processMessage(UNUSED_CHAT, message);
+    private void expectFailureWithMessage(final String aBadMessage) {
+        context.checking(new Expectations() {{
+            oneOf(listener).auctionFailed();
+            oneOf(failureReporter).cannotTranslateMessage(with(SNIPER_ID), with(aBadMessage), with(any(Exception.class)));
+        }});
     }
 
     @Test
     void notifiesAuctionFailedWhenEventTypeMissing() {
         context.checking(new Expectations() {{
+            allowing(failureReporter);
             exactly(1).of(listener).auctionFailed();
         }});
 
