@@ -51,6 +51,11 @@ public class XMPPAuctionHouseTest {
         return new AuctionEventListener() {
 
             @Override
+            public void auctionFailed() {
+
+            }
+
+            @Override
             public void auctionClosed() {
                 auctionWasClosed.countDown();
             }

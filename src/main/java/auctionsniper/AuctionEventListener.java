@@ -3,6 +3,8 @@ package auctionsniper;
 import java.util.EventListener;
 
 public interface AuctionEventListener extends EventListener {
+    void auctionFailed();
+
     enum PriceSource {
         FromSniper, FromOtherBidder
     }

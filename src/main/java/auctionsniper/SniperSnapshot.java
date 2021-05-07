@@ -53,4 +53,8 @@ public class SniperSnapshot {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    public SniperSnapshot failed() {
+        return new SniperSnapshot(itemId, 0,0,SniperState.FAILED);
+    }
 }

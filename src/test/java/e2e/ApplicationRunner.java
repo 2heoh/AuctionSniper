@@ -86,7 +86,7 @@ public class ApplicationRunner {
     }
 
     public void showsSniperHasFailed(AuctionServer auction) {
-        driver.showsSniperStatus(textFor(SniperState.FAILED));
+        driver.showsSniperStatus(auction.getItemId(), 0, 0, textFor(SniperState.FAILED));
     }
 
     public void reportsInvalidMessage(AuctionServer auction, String brokenMessage) {

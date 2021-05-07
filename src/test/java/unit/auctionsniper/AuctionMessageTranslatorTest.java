@@ -53,4 +53,28 @@ public class AuctionMessageTranslatorTest{
         message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: "+SNIPER_ID+";");
         translator.processMessage(UNUSED_CHAT, message);
     }
+
+    @Test
+    void notifiesAuctionFailedWhenBadMessageReceived() {
+        context.checking(new Expectations() {{
+            exactly(1).of(listener).auctionFailed();
+        }});
+
+        Message message = new Message();
+        message.setBody("a bad message");
+
+        translator.processMessage(UNUSED_CHAT, message);
+    }
+
+    @Test
+    void notifiesAuctionFailedWhenEventTypeMissing() {
+        context.checking(new Expectations() {{
+            exactly(1).of(listener).auctionFailed();
+        }});
+
+        final var message = new Message();
+        message.setBody("SOLVersion: 1.1; CurrentPrice: ; Increment: 5; Bidder: "+SNIPER_ID+";");
+
+        translator.processMessage(UNUSED_CHAT, message);
+    }
 }

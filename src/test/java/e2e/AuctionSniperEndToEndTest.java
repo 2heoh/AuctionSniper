@@ -142,6 +142,7 @@ public class AuctionSniperEndToEndTest {
     @AfterEach
     public void stopAuction() {
         auction.stop();
+        auction2.stop();
     }
 
     @AfterEach

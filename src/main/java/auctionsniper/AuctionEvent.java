@@ -9,23 +9,23 @@ import static auctionsniper.AuctionEventListener.PriceSource.FromSniper;
 public class AuctionEvent {
     private final Map<String, String> fields = new HashMap<>();
 
-    public String type() {
+    public String type() throws MissingValueException {
         return get("Event");
     }
 
-    public int currentPrice() {
+    public int currentPrice() throws MissingValueException {
         return getInt("CurrentPrice");
     }
 
-    public int increment() {
+    public int increment() throws MissingValueException {
         return getInt("Increment");
     }
 
-    private String bidder() {
+    private String bidder() throws MissingValueException {
         return get("Bidder");
     }
 
-    public AuctionEventListener.PriceSource isFrom(String sniperId) {
+    public AuctionEventListener.PriceSource isFrom(String sniperId) throws MissingValueException {
         return sniperId.equals(bidder()) ? FromSniper : FromOtherBidder;
     }
 
@@ -46,12 +46,16 @@ public class AuctionEvent {
         return messageBody.split(";");
     }
 
-    private int getInt(String fieldName) {
+    private int getInt(String fieldName) throws MissingValueException {
         return Integer.parseInt(get(fieldName));
     }
 
-    private String get(String fieldName) {
-        return fields.get(fieldName);
+    private String get(String fieldName) throws MissingValueException {
+        final var value = fields.get(fieldName);
+        if (null == value) {
+            throw new MissingValueException(fieldName);
+        }
+        return value;
     }
 
 }
