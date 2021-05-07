@@ -1,6 +1,8 @@
 package intergration.ui;
 
 import auctionsniper.SniperPortfolio;
+import auctionsniper.UserRequestListener;
+import auctionsniper.domain.Item;
 import auctionsniper.ui.MainWindow;
 import auctionsniper.ui.SniperTableModel;
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
@@ -26,12 +28,12 @@ public class MainWindowTest {
 
     @Test
     void makesUserRequestWhenJoinButtonClicked() {
-        final var buttonProbe = new ValueMatcherProbe<String>(equalTo("item-id"), "join request");
+        final ValueMatcherProbe<Item> itemProbe =
+                new ValueMatcherProbe<>(equalTo(new Item("an item-id", 789)), "item request");
 
-        mainWindow.addUserRequestListener(itemId -> buttonProbe.setReceivedValue(itemId));
-
-        driver.startBiddingFor("item-id");
-        driver.check(buttonProbe);
+        mainWindow.addUserRequestListener(item -> itemProbe.setReceivedValue(item));
+        driver.startBiddingFor("an item-id", 789);
+        driver.check(itemProbe);
     }
 
 }

@@ -1,6 +1,7 @@
 package unit.auctionsniper;
 
 import auctionsniper.*;
+import auctionsniper.domain.Item;
 import auctionsniper.ui.SniperTableModel;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -26,25 +27,25 @@ public class SniperLauncherTest {
 
     @Test
     void addsNewSniperToCollectorAnThenJoinsAuction() {
-        final String itemId = "item 123";
+        final Item item = new Item("item 123", 123);
         context.checking(new Expectations(){{
-            allowing(auctionHouse).auctionFor(itemId);
+            allowing(auctionHouse).auctionFor(item.identifier);
             will(returnValue(auction));
 
-            oneOf(auction).addAuctionEventListener(with(sniperForItem(itemId)));
+            oneOf(auction).addAuctionEventListener(with(sniperForItem(item.identifier)));
             when(auctionState.is("not joined"));
-            oneOf(sniperCollector).addSniper(with(sniperForItem(itemId)));
+            oneOf(sniperCollector).addSniper(with(sniperForItem(item.identifier)));
             when(auctionState.is("not joined"));
 
             oneOf(auction).join();
             then(auctionState.is("joined"));
         }});
 
-        launcher.joinAuction(itemId);
+        launcher.joinAuction(item);
     }
 
     protected Matcher<AuctionSniper>sniperForItem(String itemId) {
-        return new FeatureMatcher<AuctionSniper, String>(equalTo(itemId), "sniper with item id", "item") {
+        return new FeatureMatcher<>(equalTo(itemId), "sniper with item id", "item") {
             protected String featureValueOf(AuctionSniper actual) {
                 return actual.getSnapshot().itemId;
             }

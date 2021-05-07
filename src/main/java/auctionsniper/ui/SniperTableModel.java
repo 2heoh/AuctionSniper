@@ -14,8 +14,10 @@ public class SniperTableModel extends AbstractTableModel implements SniperListen
             "Joining",
             "Bidding",
             "Winning",
+            "Losing",
             "Lost",
             "Won",
+            "Failed"
     };
 
     public SniperTableModel() {

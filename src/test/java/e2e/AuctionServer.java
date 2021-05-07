@@ -1,4 +1,4 @@
-package auctionsniper;
+package e2e;
 
 import org.jivesoftware.smack.XMPPException;
 
@@ -16,4 +16,6 @@ public interface AuctionServer {
     void reportPrice(int price, int increment, String bidder) throws XMPPException;
 
     void hasReceivedBid(int bid, String sniperId) throws InterruptedException;
+
+    void sendInvalidMessageContaining(String brokenMessage) throws XMPPException;
 }

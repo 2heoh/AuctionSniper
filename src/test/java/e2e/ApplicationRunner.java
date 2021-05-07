@@ -1,6 +1,5 @@
 package e2e;
 
-import auctionsniper.AuctionServer;
 import auctionsniper.Main;
 import auctionsniper.SniperState;
 import auctionsniper.ui.MainWindow;
@@ -21,6 +20,13 @@ public class ApplicationRunner {
             driver.startBiddingFor(itemId);
             driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
         }
+    }
+
+    public void startBiddingInWithStopPrice(AuctionServer auction, int stopPrice) {
+        final var auctionServers = new AuctionServer[1];
+        auctionServers[0] = auction;
+        startSniper(auctionServers);
+        driver.startBiddingFor(auction.getItemId(), stopPrice);
     }
 
     private void startSniper(AuctionServer[] auctions) {
@@ -54,8 +60,8 @@ public class ApplicationRunner {
     }
 
 
-    public void showsSniperHasLostAuction() {
-        driver.showsSniperStatus(textFor(SniperState.LOST));
+    public void showsSniperHasLostAuction(AuctionServer auction, int lastPrice, int lastBid) {
+        driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid, textFor(SniperState.LOST));
     }
 
     public void stop() {
@@ -72,5 +78,18 @@ public class ApplicationRunner {
 
     public void showsSniperHasWonAuction(AuctionServer auction, int lastPrice) {
         driver.showsSniperStatus(auction.getItemId(), lastPrice, lastPrice, MainWindow.STATUS_WON);
+
+    }
+
+    public void hasShownSniperIsLosing(AuctionServer auction, int lastPrice, int lastBid) {
+        driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid, MainWindow.STATUS_LOSING);
+    }
+
+    public void showsSniperHasFailed(AuctionServer auction) {
+        driver.showsSniperStatus(textFor(SniperState.FAILED));
+    }
+
+    public void reportsInvalidMessage(AuctionServer auction, String brokenMessage) {
+
     }
 }

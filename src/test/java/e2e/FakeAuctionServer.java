@@ -1,6 +1,5 @@
 package e2e;
 
-import auctionsniper.AuctionServer;
 import auctionsniper.xmpp.XMPPAuction;
 import org.hamcrest.Matcher;
 import org.jivesoftware.smack.*;
@@ -30,11 +29,9 @@ public class FakeAuctionServer implements AuctionServer {
         SASLAuthentication.unregisterSASLMechanism("DIGEST-MD5");
         final var username = String.format(ITEM_AS_LOGIN, itemId);
         connection.login(username, AUCTION_PASSWORD, AUCTION_RESOURCE);
-        connection.getChatManager().addChatListener(new ChatManagerListener() {
-            public void chatCreated(Chat chat, boolean createdLocally) {
-                currentChat = chat;
-                chat.addMessageListener(messageListener);
-            }
+        connection.getChatManager().addChatListener((chat, createdLocally) -> {
+            currentChat = chat;
+            chat.addMessageListener(messageListener);
         });
     }
 
@@ -59,6 +56,11 @@ public class FakeAuctionServer implements AuctionServer {
     @Override
     public void hasReceivedBid(int bid, String sniperId) throws InterruptedException {
         receivesAMessageMatching(sniperId, equalTo(String.format(XMPPAuction.BID_COMMAND_FORMAT, bid)));
+    }
+
+    @Override
+    public void sendInvalidMessageContaining(String brokenMessage) throws XMPPException {
+        currentChat.sendMessage(brokenMessage);
     }
 
     public void announceClosed() throws XMPPException {

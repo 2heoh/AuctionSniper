@@ -1,14 +1,14 @@
 package auctionsniper.ui;
 
 import auctionsniper.SniperPortfolio;
+import auctionsniper.SniperState;
 import auctionsniper.UserRequestListener;
+import auctionsniper.domain.Item;
 import auctionsniper.util.Announcer;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     public static final String SNIPER_STATUS_NAME = "sniper status";
@@ -19,17 +19,19 @@ public class MainWindow extends JFrame {
     public static final String STATUS_JOINING = "Joining";
     public static final String STATUS_BIDDING = "Bidding";
     public static final String NEW_ITEM_ID_NAME = "item id";
+    public static final String NEW_ITEM_STOP_PRICE_NAME = "stop price";
     public static final String JOIN_BUTTON_NAME = "Join Auction";
+    public static final String STATUS_LOSING = "Losing";
+    public static final String STATUS_FAILED = "Failed";
 
     private static final String SNIPERS_TABLE_NAME = "none";
-
-    private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
     private final Announcer<UserRequestListener> userRequests =  Announcer.to(UserRequestListener.class);
 
     public MainWindow(SniperPortfolio snipers) {
         super("Auction Sniper");
         setName(MAIN_WINDOW_NAME);
+        JLabel sniperStatus = createLabel(STATUS_JOINING);
         add(sniperStatus);
         fillContentPane(makeSnipersTable(snipers), makeControls());
         pack();
@@ -44,9 +46,17 @@ public class MainWindow extends JFrame {
         itemIdField.setName(NEW_ITEM_ID_NAME);
         controls.add(itemIdField);
 
+        final var stopPriceField = new JTextField();
+        stopPriceField.setColumns(15);
+        stopPriceField.setName(NEW_ITEM_STOP_PRICE_NAME);
+        controls.add(stopPriceField);
+
         final var joinAuctionButton = new JButton("Join Auction");
         joinAuctionButton.setName(JOIN_BUTTON_NAME);
-        joinAuctionButton.addActionListener(e -> userRequests.announce().joinAuction(itemIdField.getText()));
+        joinAuctionButton.addActionListener(
+            e -> userRequests.announce().joinAuction(new Item(itemIdField.getText(), Integer.parseInt(stopPriceField.getText())))
+        );
+
         controls.add(joinAuctionButton);
 
         return controls;
